@@ -95,6 +95,7 @@
     ;;array
     ((array 1 ((x y) (z w)))  :errs) ;ranks differ
     ((array 2 ((x y) (z)))    :errs) ;dims differ
+    ((array 1 (x))            (make-array '(1) :initial-contents '(1)))
     ((array 2 ((x y) (z w)))  (make-array '(2 2) :initial-contents '((1 2) (3 4))))
     ((array (2 string) ((x y) (z w))) (make-array '(2 2) :element-type 'integer
 						  :initial-contents '((1 2) (3 4)))  :not)

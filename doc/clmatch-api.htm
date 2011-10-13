@@ -1,0 +1,353 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type"        content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type"  content="text/css">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+
+<title>cl-match: user's manual - Dan Bensen</title>
+
+<link rel="stylesheet" href="all.css" type="text/css" media="screen">
+
+<link rel="shortcut icon" href="favicon.ico">
+</head>
+
+<body>
+<div class="cozy">
+<a href="index.html">Home</a>&nbsp;
+&nbsp;<a href="clmatch.htm">cl-match</a>
+
+<div align="center">
+<h2>cl-match user's manual</h2>
+<br>
+
+<!--
+<table style="width: 35em; text-align: left">
+<tr><td>
+</td>
+</tr>
+</table>
+<br>
+-->
+
+<table style=
+  "border-spacing: .5em 1em; width: 100%; min-width: 30em; max-width: 45em; text-align: left">
+
+<tr>
+  <th><a name="intro">intro</a></th>
+  <td>
+<p>
+
+All patterns (and guards) are written as s-expressions.
+The basic matching engine is IFMATCH, a macro that takes
+(a) a pattern,
+(b) an expression whose value will be compared with the pattern,
+(c) a form to be evaluated on a match, and
+(d) code for a mismatch.
+A value can be tested against multiple patterns with MATCH,
+which is related to IFMATCH in the same way that COND is related to
+ IF<a name="ref-elisp-if" href="#foot-elisp-if">[1]</a>.
+New patterns can be defined by the user with DEFPATTERN.
+</p>
+</td></tr>
+
+<tr>
+  <th><a name="">pattern structure</a></th>
+  <td>
+<p>
+A pattern can be either an atom or a list.
+A literal atom generates an EQL test.
+A symbol generates a variable binding on its first occurance
+in the pattern,
+and an EQL test on each subsequent occurance.
+The wildcard symbol <b>_</b> matches anything.
+</p><p>
+Lists are used to represent compound patterns, which usually take
+one or more arguments.
+Most arguments either are or contain patterns to be matched
+by subsections of the value being matched by the overall pattern.
+These patterns are currently implemented:
+
+<a href="#acsrs">ACSRS</a>, 
+<a href="#and">AND</a>, 
+<a href="#array">ARRAY</a>, 
+<a href="#as">AS</a>, 
+<a href="#cons">CONS</a>, 
+<a href="#list">LIST</a>, 
+<a href="#list*">LIST*</a>, 
+<a href="#or">OR</a>, 
+<a href="#quote">QUOTE</a>, 
+<a href="#slots">SLOTS</a>, 
+<!-- <a href="#string">STRING</a>, -->
+<a href="#struct">STRUCT</a>, 
+<a href="#type">TYPE</a>,
+<a href="#vals">VALS</a>,
+and 
+<a href="#vec">VEC</a>.
+
+Each OR pattern creates branches for alternative patterns,
+and a VALS pattern at the top level of the overall pattern
+will bind multiple values.
+</p>
+</td></tr>
+
+<tr>
+  <th><a name="guards">guards</a></th>
+  <td>
+<p>
+
+Guards are written as WHEN forms, where the first argument
+is the guard test, and the second argument is the pattern.
+The second argument is optional, and defaults to _.
+If one or more OR patterns are present,
+ branch-specific guards can be included immediately inside
+the corresponding ORs.  Otherwise, only the outermost form
+can be a guard.
+</p>
+</td></tr>
+
+<tr>
+  <th><a name="xtensn">extension</a></th>
+  <td>
+<p>
+New patterns can be defined with the DEFPATTERN macro.
+Built-in patterns can be overridden, and overridden 
+built-in patterns can be accessed by specifying their names as strings
+instead of symbols.
+</p>
+  </td>
+</tr>
+
+<tr>
+<th><a name="api">api</a></th>
+<td>
+
+<p>(macro)<br>
+<b>defpattern</b> <i>name args</i> &amp;body <i>body</i>
+</p><p>
+Defines a new pattern.  The pattern will be a list
+whose first element is the&nbsp;symbol <i>name</i> and whose remainder 
+is&nbsp;specified by <i>args</i>.  
+The macro is&nbsp;expected to return a valid pattern.
+</p>
+
+<p>
+(macro)<br>
+<b>ifmatch</b> <i>pattern expr onmatch</i> &amp;rest <i>on-mismatch</i>
+</p><p>
+Evaluates <i>expr</i>, and compares it to <i>pattern</i>,
+ binding names in <i>pattern</i> as they're encountered.  
+Evaluates <i>onmatch</i> if the pattern matches,
+otherwise evaluates <i>on-mismatch</i>.
+</p>
+
+<p>
+(macro)<br>
+<b>letmatch</b> <i>pattern expr</i> &amp;rest <i>onmatch</i>
+</p><p>
+Same as ifmatch, except there are no on-mismatch forms,
+ the onmatch forms are inlined,
+and an error is signaled on mismatch.
+</p>
+
+<p>(macro)<br>
+<b>match</b> <i>expr</i> {(<i>pattern</i> &amp;rest <i>body</i>)}*
+</p><p>
+Evaluates <i>expr</i>, then compares the resulting value to each <i>pattern</i>
+in succession until a pattern matches, then evaluates the
+<i>body</i> immediately following the successful pattern.
+</p>
+<!--
+<p>
+(function)<br>
+<b>matchesp</b> <i>val pattern</i>
+</p><p>
+Returns <b>t</b> if <i>val</i> matches <i>pattern</i>, otherwise returns <b>nil</b>.
+</p>
+-->
+  </td>
+</tr>
+
+<tr>
+<th>patterns</th>
+<td>
+
+<!--
+<p><b></b> &amp;rest <i>forms</i>
+<br>
+</p>
+-->
+
+<p><b><a name="acsrs">acsrs</a></b> &amp;rest <i>forms</i>
+<br>
+Each specified accessor must be defined for the value.
+Each form can be either a two-element list,
+ where the first element is the name of the accessor and the second element is a pattern,
+or a symbol (the accessor), which always matches as long as the accessor exists
+and can be applied to the value.
+</p>
+
+<p><b><a name="and">and</a></b> &amp;rest <i>patterns</i>
+<br>
+The value must match all the patterns.
+</p>
+
+<p>
+<span style="color: red">
+Note:  the syntax of the array pattern has changed since the previous release.
+</span>
+<br><b><a name="array">array</a></b> <i>spec patrn-tree</i>
+<br>
+The value must be an array whose rank <i>rank</i> is specified by <i>spec</i>.
+If <i>spec</i> is an integer, it represents <i>rank</i>.
+If <i>spec</i> is a list, the first element is <i>rank</i> and
+the optional second element is a type specifier.
+The array's dimensions must match the dimensions of <i>patrn-tree</i> down to depth <i>rank</i>,
+and its elements must match the corresponding patterns in <i>patrn-tree</i> at depth <i>rank</i>.
+If the type is specified, each element in the array must have that type.
+</p>
+
+<p><b><a name="as">as</a></b> <i>name pattern</i>
+<br>
+Binds the symbol <i>name</i> to the value
+ (or compares the value to the current value if <i>name</i> is already bound)
+ before testing the value against <i>pattern</i>.
+</p>
+
+<p><b><a name="cons">cons</a></b> <i>p-car p-cdr</i>
+<br>
+The value must be a cons. 
+The car and cdr of the value are matched against the patterns <i>p-car</i> and <i>p-cdr</i>. 
+ Equivalent to (list* <i>p-car p-cdr</i>).
+</p>
+<p><b><a name="list">list</a></b> &amp;rest <i>patterns</i>
+<br>
+The value must be a list whose length is equal to that of <i>patterns</i>,
+and whose elements match the corresponding elements of <i>patterns</i>.
+</p>
+
+<p><b><a name="list*">list*</a></b> &amp;rest <i>patterns</i>
+<br>
+Same as LIST, except the last argument is the remainder of the list.
+</p>
+
+<p><b><a name="or">or</a></b> &amp;rest <i>patterns</i>
+<br>
+Allows alternative patterns.
+Each pattern can have a WHEN guard in its outermost form,
+and the guard will apply only to that branch.
+<br>
+The outermost OR can contain VALS patterns, as long as they all
+have the same number of patterns (and bind the same variables).
+<br>
+Branches are searched in left-to-right, depth-first order.<br>
+</p>
+
+<p><b><a name="quote">quote</a></b> <i>value</i>
+<br>
+Generates an EQL test with the quoted value.
+</p>
+
+<p><b><a name="slots">slots</a></b> &amp;rest <i>slot-forms</i>
+<br>
+The value must be a standard object containing the slots 
+specified in <i>slot-forms</i>.
+Each slot form can be either a symbol, or a list with one or two elements.
+If the slot form is a symbol, it binds the slot to a variable of the same name.
+If it's a list, the first element is the slot name,
+and the optional second element is a pattern,
+which defaults to <b>_</b>.
+</p>
+
+<!--
+<p><b><a name="string">string</a></b> <i>string</i>
+<br>
+The value must be string= to <i>string</i>.
+</p>
+-->
+
+<p><b><a name="struct">struct</a></b> <i>prefix</i> &amp;rest <i>field-forms</i>
+<br>
+The value must be a structure, and each field must be
+accessible with a function whose name begins with prefix.
+Each field form can be either
+a two-element list, where the first element is the field name
+and the second element is a pattern,
+or a symbol (the field's name), which always matches.
+</p>
+<p><b><a name="type">type</a></b> <i>type</i> &amp;optional <i>pattern</i><br>
+The value must have type <i>type</i> and must match the pattern <i>pattern</i>,
+which defaults to _.
+</p>
+
+<p><b><a name="vals">vals</a></b> &amp;rest <i>patterns</i>
+<br>
+Binds and analyzes multiple values.
+VALS is allowed only at the top level of a pattern.
+</p>
+
+<p><b><a name="vec">vec</a></b> <i>patrn-list</i> &amp;optional <i>elt-type</i>
+<br>
+The value must be a vector whose length and elements match those of <i>patrn-list</i>.
+Equivalent to (array (1 <i>elt-type</i>) <i>patrn-list</i>).
+</p>
+
+<p><b><a name="when">when</a></b> <i>test</i> &amp;optional <i>pattern</i><br>
+If the current branch of the pattern's OR tree matches,
+then the guard expression <i>test</i> and all other guards
+applicable to <i>pattern</i>
+are evaluated as a final boolean test for that branch.
+<i>pattern</i> defaults to _.
+</p>
+</td>
+</tr>
+
+<tr>
+<th><a name="todo">to do</a></th>
+<td>
+
+<p>
+NOT patterns would be nice if they didn't mess with OR patterns and variable bindings.
+But they have some tricky interactions, so they're not implemented yet.
+</p><p>
+Custom structure predicates aren't supported yet.
+</p>
+
+</td></tr>
+<!--
+
+<tr>
+<th>
+<a name=""></a>
+</th>
+<td>
+<p>
+</p>
+</td>
+</tr>
+
+-->
+
+</table>
+
+<br>
+<span style="font-size: small">
+<a name="foot-elisp-if" href="#ref-elisp-if">[1]</a>
+More precisely, Elisp-style IF, in which the failure code is a &amp;rest parameter.
+
+</center>
+<br>
+<br>
+
+<div class="footr">
+&copy;&nbsp;2008&nbsp;Daniel&nbsp;S.&nbsp;Bensen&nbsp;
+&nbsp;<a href="index.html">Home</a>&nbsp;
+&nbsp;<a href="about.htm">About</a>
+&nbsp;<a href="sitemap.htm">Site&nbsp;map</a>&nbsp;
+</div>
+</div>
+</div>
+</body>
+</html>
+
+

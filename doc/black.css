@@ -1,0 +1,28 @@
+
+body {
+  color: white;
+  background: black; /* #141618;*/ /* url(doublerag.jpg) center */
+}
+
+.maintitle { color: silver }
+.silver    { color: silver }
+
+.new, .new-h2 { color: yellow }
+
+h1, h2     { color: deepskyblue }
+h3, h4, th { color: skyblue }
+b          { color: #DDD }
+hr         { color: red }
+
+a:link    { color: #60FFD0 }   /* unvisited link */
+a:visited { color: #0CB }    /* visited links */
+a:active  { color: red }   /* active links */
+
+a.bold:link    { color: #2E9 }   /* unvisited link */
+a.bold:visited { color: #1A8 }   /* visited links */
+a.bold:active  { color: darkred }   /* active links */
+
+a.xtrnl:link   , a.xtrnl_bold:link    { color: gold }   /* unvisited link */
+a.xtrnl:visited, a.xtrnl_bold:visited { color: tan  }   /* visited links */
+a.xtrnl:active , a.xtrnl_bolc:active  { color: gray }   /* active links */
+

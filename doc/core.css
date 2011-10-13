@@ -1,0 +1,78 @@
+
+body {
+  margin: auto;
+  font: 100.01%/1.6em sans-serif;
+}
+
+p { margin-top: 0; margin-bottom: .6em }
+
+.bigr { font-size: 110% }
+
+.cozy {
+  margin-top  : .4em;
+  margin-left : 2%;
+  margin-right: 2%;
+  margin-bottom: 1em;
+}
+
+div.rigid {
+  width 40em;
+}
+
+.indent { margin-left: 2.5em }
+
+.std2col {
+ max-width: 95%; 
+}
+
+.new    { font-size: small; font-weight: bold; }
+.new-h2 { font-variant: small-caps; font-weight: bold; }
+
+.roman { font-style: normal; }
+
+.small { font-size: small }
+
+.footr { font-size: small; text-align: center }
+
+a  { text-decoration: none }
+a.bold, a.xtrnl_bold { font-weight: bold }
+
+.narrow { border-spacing: 1em .5em; width: 40em; text-align: left }
+
+h3 { margin-top: 1.5em margin-bottom: .2em }
+
+table { text-align: left }
+
+th, td.head {
+	line-height: 1.1em;
+	padding-top: .3em;
+}
+
+th {
+	vertical-align: top;
+	horizontal-align: center;
+	text-align: center
+}
+td {vertical-align: top; /* padding: .3em*/ }
+td.head {
+	text-align: center;
+	font-weight: bold;
+	margin-bottom: 0em;
+}
+ul, ol {padding: 0; margin: 0; margin-top: .25em; margin-bottom: .25em; list-style-position: outside}
+li {margin-left: 1.3em; padding-left: .2em}
+
+pre, tt {
+ font-size: 140%
+}
+
+pre {
+  line-height: 1.2em;
+  margin-left: 1.5em;
+}
+
+blockquote { font-style: italic; margin-top: 0em; margin-bottom: .6em }
+
+ol { margin-left: -2em }
+
+hr.flat { height: 20%; margin: 0; padding: 0; }  

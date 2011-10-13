@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type"        content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type"  content="text/css">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<title>cl-match: pattern matching in Lisp - Dan Bensen</title>
+<link rel="stylesheet" href="all.css" type="text/css" media="screen">
+</head>
+<body>
+<div class="cozy">
+<a href="index.html">Home</a>&nbsp;
+&nbsp;<a href="myclcode.htm">my Lisp code</a>
+<div align="center">
+<h2>cl-match</h2>
+fast, expressive pattern matching in Common Lisp<br><br>
+<b>
+<a name="api" href="clmatch-api.htm">user's manual</a> &nbsp; &nbsp;
+<a name="dzyn" href="clmatch-design.htm">internal design</a> &nbsp; &nbsp;
+<a name="dl" class="xtrnl" target="_blank"
+   href="http://common-lisp.net/project/cl-match/dl/">download</a><br>
+</b>
+<table style=
+  "border-spacing: .5em 1em; width: 100%; min-width: 30em; max-width: 42em; text-align: left">
+<tr><td>
+<p>
+Pattern matching is a convenient, expressive tool
+that combines program control and variable binding.
+Used extensively in the ML family of programming languages,
+pattern matching allows the application programmer to
+test values for internal stucture and bind names to 
+pieces of that structure, all in a single expression.
+</p><p>
+cl-match provides pattern matching with an expressive application interface
+and an efficient implementation.
+It includes all the symantic features found in ML pattern matching,
+plus a few additions:
+Multiple occurances of individual variables are supported,
+as are branch-specific guards embedded inside alternative patterns.
+There's also a convenient extension facility for creating custom patterns.
+</p><p>
+cl-match doesn't do unification or backtracking, as in Prolog.
+If you're looking for that functionality,
+try Screamer or cl-unification.
+cl-match is based in part on fare-matcher, a pattern-matching library
+created by Far&eacute; Rideau.
+</p>
+<p>
+cl-match is Copyright &copy; 2008 Daniel S. Bensen.
+cl-match is released under the terms of the
+<a class="xtrnl" target="_blank"
+ href="http://opensource.franz.com/preamble.html">Lisp Lesser GNU Public License</a>,
+known as the LLGPL.
+</p>
+  </td>
+</tr>
+<!--
+<tr>
+  <th><a name=""></a></th>
+  <td>
+<p>
+</p>
+  </td>
+</tr>
+-->
+</table>
+
+<div class="footr">
+&copy;&nbsp;2008&nbsp;Daniel&nbsp;S.&nbsp;Bensen&nbsp;
+&nbsp;<a href="index.html">Home</a>&nbsp;
+&nbsp;<a href="about.htm">About</a>
+&nbsp;<a href="sitemap.htm">Site&nbsp;map</a>&nbsp;
+</div>
+</div>
+</div>
+</body>
+</html>

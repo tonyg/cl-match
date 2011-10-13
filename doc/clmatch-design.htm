@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type"        content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type"  content="text/css">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+
+<title>cl-match: internal design - Dan Bensen</title>
+
+<link rel="stylesheet" href="all.css" type="text/css" media="screen">
+
+<link rel="shortcut icon" href="favicon.ico">
+</head>
+
+<body>
+<div class="cozy">
+<a href="index.html">Home</a>&nbsp;
+&nbsp;<a href="clmatch.htm">cl-match</a>
+
+<div align="center">
+<h2>internal design of cl-match</h2>
+
+<table style="width: 35em; text-align: left">
+
+<tr><td>
+
+
+</td>
+</tr>
+</table>
+
+<!-- table style=
+  "border-spacing: .5em 1em;" -->
+
+<div style="width: 100%; min-width: 30em; max-width: 40em; text-align: left">
+
+<h3><a name="intro">MATCH</h3>
+<p>
+The MATCH macro defines a block around the matching code,
+and the clause whose pattern matches the value returns from the block
+after evaluating its code.  IFMATCH is defined in terms of MATCH.
+</p>
+
+<h3><a name="">pattern logic</a></h3>
+<p>
+For most patterns, the function that determines
+whether or not a value matches that pattern is
+ a conjunction of boolean tests, which is represented by an AND form.
+OR patterns and WHEN guards are (so far) the only exceptions.
+An OR pattern introduces alternative patterns or subpatterns,
+and a WHEN guard specifies other condititions that
+have to be satisified for the whole pattern or a branch in an OR pattern to match.
+OR patterns can be embedded anywhere in the overall pattern,
+and guards can be placed immediately inside any OR pattern.
+The expanded code will be optimized to consolidate code
+and minimize test duplication as much as possible.
+</p><p>
+An OR pattern generates multiple branches,
+and multiple ORs generate a whole tree of OR forms
+by converting terms of the form
+ <i>(a or b) and (c or d)</i>
+ to
+ <i>(a and (c or d)) or (b and (c or d))</i>.<a href="#footnote1">[1]</a>
+</p><p>
+To consolidate the expanded code as much as possible,
+all tests not inside an OR pattern are grouped at
+the beginning of the conjunction,
+so the only term in an AND form that's allowed
+to be an OR form (corresponding to an OR pattern)
+is the last one.
+This makes the code both smaller and faster.
+</p>
+
+<h3><a name="">test construction</a></h3>
+<p>
+Test construction is implemented with two structure types, which
+are currently called TEST and CONJ.
+TEST is a complete test with variables and gensyms to be bound
+during the matching process.
+</p><p>
+CONJ stands for "conjunction".  The fields in the stucture are
+ vars, tests, gensyms, ors, and guards.  Each field is a list,
+and the tests, ors, and guards are implicitly combined in an AND form.
+Tests are pushed onto the tests field in cronological (runtime) order,
+and the final test is just an AND form with the
+reversed list of tests spliced into it, along with a possible OR form or guard
+at the end.
+Likewise, gensyms, OR forms, guards, and unique variable names
+are pushed onto the corresponding fields as they're encountered
+in the pattern.
+</p><p>
+For performance reasons, it's sometimes convenient to bind
+one or more gensyms to sections of the value being tested.
+Since a nonmatching value might not even contain those 
+substructures, all gensyms and user-defined variables
+are bound to NIL before the test, and are SETF'd as
+the test proceeds.
+This is done with the SETFT macro, which wraps a SETF form
+in a PROGN and returns true.  SETFT forms are then mixed
+together with the pattern tests so that each gensym or
+variable is set after its assigned location has been found (if it exists),
+ but before the variable or gensym is used in any tests.
+So the expanded code is procedural, but it should be
+both fast and compact.
+</p>
+
+<h3><a name="or">OR patterns</a></h3>
+<p>
+Once all the regular tests have been found,
+the OR tests are constucted.
+The final form of the test is a tree where
+each branch node is either an OR form, or an AND form
+whose last term is an OR form.
+The leaf nodes of the test are either guards
+or whatever pattern tests happen to occur last.
+Most of the tests are expanded directly into
+the code, but guards are wrapped in lambda forms
+so guards that apply to many branches can be
+called from many leaf nodes without generating
+too much code bloat.
+</p>
+<p>
+<span style="color: gray">
+There's also an interaction between NOT forms and OR forms.
+The expansion code tries to combine them as efficiently as possible.
+</span>
+NOT patterns can be nice if they don't mess with variable bindings,
+but they're tricky to implement, so we'll save them for later.
+</p>
+<br>
+
+<div style="font-size: small">
+<a name="footnote1">[1]</a>
+It's not enough to embed OR forms in an AND form
+separately, continuing from an OR form as soon as 
+a matching branch has been found.
+Even if one branch of an OR form passes,
+ a second OR test might fail with the variables bound in the successful branch
+of the first OR,
+ even though it would have passed with a different branch of the first OR. 
+So all possible branch combinations have to to be tested,
+with branch-specific guards evaluated as appropriate
+after successful matching of each corresponding branch.
+</div>
+</div>
+<br>
+<div class="footr">
+&copy;&nbsp;2008&nbsp;Daniel&nbsp;S.&nbsp;Bensen&nbsp;
+&nbsp;<a href="index.html">Home</a>&nbsp;
+&nbsp;<a href="about.htm">About</a>
+&nbsp;<a href="sitemap.htm">Site&nbsp;map</a>&nbsp;
+</div>
+</div>
+</div>
+</body>
+</html>
+
+

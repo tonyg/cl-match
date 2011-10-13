@@ -1,0 +1,69 @@
+
+This is the README file for cl-match 0.1.8, 
+an extended--ML-style pattern-matching library for Common Lisp.
+
+cl-match is Copyright (c) 2008 Daniel S. Bensen, and released 
+under the terms of the Lisp Lesser GNU Public License
+(http://opensource.franz.com/preamble.html), known as the LLGPL.
+
+LOADING
+
+There are three ways to load cl-match:
+* load the file load.lisp in this directory
+* asdf-install :cl-match
+* asdf-load the system files in this directory:
+  * standard-cl   (general-purpose library)
+  * cl-match      (pattern matching)
+  * pcl-unit-test (unit testing framework)
+  * cl-match-test (unit tests)
+
+To learn how to use asdf, see the online asdf documentation here:
+http://constantly.at/lisp/asdf/Using-asdf-to-load-systems.html
+
+TESTING
+
+To test cl-match after loading, 
+evaluate the form (cl-match-test::test-match).
+cl-match has been tested on SBCL and Allegro CL.
+
+NOTES
+
+* There's an html user's manual in the doc directory.
+* pcl-unit-test is based on Peter Seibel's book Practical Common Lisp.
+* cl-match is based in part on fare-matcher, by Fare Rideau.
+
+Please direct any and all bug reports to cl-match-devel@common-lisp.net,
+or Dan at dsb@prairienet.org.
+
+
+CHANGELOG
+--------------------------------------------------------
+2008may27 0.1.8
+Bugfixed list patterns (consp) and default patterns (strings & keywords),
+refactored MATCH & IFMATCH.
+
+2008may21 0.1.7
+Added load files, eliminated some of the load warnings.
+
+2008may10 0.1.6
+Bugfixed the list patterns, changed the syntax of ARRAY. 
+
+2008may06 0.1.5
+Works with Allegro CL (despite all the warning messages)
+
+2008may06 0.1.4
+Renamed stdlib to standard (std).
+Moved in-defpackage from cl to std.
+
+2008may05 0.1.3
+added array & vector patterns.
+eliminated stdlib dependence of client code.
+
+2008may02 0.1.2
+match, or, when, and vals all work together.
+
+2008apr28 0.1.1
+bugfixed MATCH, made other random changes
+
+2008apr27 0.1
+initial release

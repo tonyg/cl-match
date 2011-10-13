@@ -135,7 +135,7 @@ This software is provided "as is" with no express or implied warranty.
 
 (def  orf (&rest vals) (dolist (val vals nil) (when   val (return val))))
 (def andf (&rest vals)
-  (lett rzult nil
+  (lett rzult t
     (dolist (val vals rzult) (if val (setf rzult val) (return nil)))))
 
 (def /_ (x y) (floor x y))
